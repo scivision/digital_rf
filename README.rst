@@ -22,8 +22,51 @@ User mailing list for help/questions: openradar-users@openradar.org
 Developer mailing list: openradar-developers@openradar.org
 
 
-Dependencies
+
+Installation
 ============
+
+Conda is by far the easiest method to use Digital RF and is recommended.
+
+conda
+-------------------
+
+Install digital_rf using our `Conda <https://conda.io/docs/>`_ binary package. 
+It's best to create a separate Conda environment for digital_rf due to the long list of dependences and need for Python 2.7, which is increasingly hard to use with package as fundamental as Numpy::
+
+    conda create -n digrf python=2.7
+    . activate digrf
+    
+    conda config --add channels ryanvolz
+    conda config --add channels conda-forge
+    conda install digital_rf
+
+Using source code package
+-------------------------
+
+First, ensure that you have the above-listed dependencies installed. On macOS the dependencies can be installed through macports.
+
+Clone the repository and enter the source directory::
+
+    git clone https://github.com/MITHaystack/digital_rf.git
+    cd digital_rf/build
+
+Build and install::
+
+    cmake ..
+    make
+    sudo make install
+
+Finally, you will probably then need to update the library cache so the newly-installed ``libdigital_rf`` is found::
+
+    sudo ldconfig
+
+The above commands will build the ``gr_drf`` module for GNU Radio if GNU Radio is found on the system. To disable ``gr_drf`` manually, set the 'ENABLE_GNURADIO' option to 'OFF' when invoking cmake::
+
+    cmake -DENABLE_GNURADIO=OFF ..
+    
+Dependencies
+------------
 
 Build:
 
@@ -55,47 +98,11 @@ Additional optional runtime dependencies:
 * python-sounddevice (``pip install sounddevice``) [drf_sound]
 
 
-Installation
-============
-
-Using source code package
--------------------------
-
-First, ensure that you have the above-listed dependencies installed. On macOS the dependencies can be installed through macports.
-
-Clone the repository and enter the source directory::
-
-    git clone https://github.com/MITHaystack/digital_rf.git
-    cd digital_rf/build
-
-Build and install::
-
-    cmake ..
-    make
-    sudo make install
-
-Finally, you will probably then need to update the library cache so the newly-installed ``libdigital_rf`` is found::
-
-    sudo ldconfig
-
-The above commands will build the ``gr_drf`` module for GNU Radio if GNU Radio is found on the system. To disable ``gr_drf`` manually, set the 'ENABLE_GNURADIO' option to 'OFF' when invoking cmake::
-
-    cmake -DENABLE_GNURADIO=OFF ..
 
 
-Using Conda package
--------------------
-
-Alternatively, you can install digital_rf using our `Conda <https://conda.io/docs/>`_ binary package. Our package is compatible with the `conda-forge <https://conda-forge.github.io/>`_ distribution of community-maintained packages.
-
-In an existing Conda environment, run the following to install digital_rf and its dependencies::
-
-    conda config --add channels ryanvolz
-    conda config --add channels conda-forge
-    conda install digital_rf
 
 
-Example Usage
+Usage
 =============
 
 Python and C examples can be found in the examples directory in the source tree. The C examples can be compiled from the build directory by running::
