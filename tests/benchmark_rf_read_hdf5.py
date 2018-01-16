@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # ----------------------------------------------------------------------------
 # Copyright (c) 2017 Massachusetts Institute of Technology (MIT)
 # All rights reserved.

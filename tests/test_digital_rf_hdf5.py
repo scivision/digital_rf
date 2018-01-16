@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # ----------------------------------------------------------------------------
 # Copyright (c) 2017 Massachusetts Institute of Technology (MIT)
 # All rights reserved.
@@ -53,8 +54,8 @@ arr_data_single[50:, :]['i'] = 6
 
 
 # simulate 10 samples of data followed by 10 sample gap
-global_sample_arr = numpy.array(range(10), dtype=numpy.uint64) * 20
-block_sample_arr = numpy.array(range(10), dtype=numpy.uint64) * 10
+global_sample_arr = numpy.array(list(range(10)), dtype=numpy.uint64) * 20
+block_sample_arr = numpy.array(list(range(10)), dtype=numpy.uint64) * 10
 
 # constants
 sample_rate_numerator = 200
@@ -68,8 +69,8 @@ start_global_index = int(numpy.uint64(1394368230 * sample_rate)) + 1
 # test get unix time
 dt, picoseconds = digital_rf.get_unix_time(
     int(start_global_index), sample_rate_numerator, sample_rate_denominator)
-print('For start_global_index=%i and sample_rate=%f, dt is %s and picoseconds is %i' % (start_global_index, sample_rate,
-                                                                                        dt, picoseconds))
+print(('For start_global_index=%i and sample_rate=%f, dt is %s and picoseconds is %i' % (start_global_index, sample_rate,
+                                                                                        dt, picoseconds)))
 
 # set up top level directory
 os.system("rm -rf /tmp/hdf5 ; mkdir /tmp/hdf5")
@@ -249,7 +250,7 @@ t = time.time()
 pwd = os.getcwd()
 os.chdir('/tmp')
 testReadObj = digital_rf.DigitalRFReader(['hdf5', 'hdf52'])
-print('init took %f' % (time.time() - t))
+print(('init took %f' % (time.time() - t)))
 
 channels = testReadObj.get_channels()
 print(channels)
@@ -263,57 +264,57 @@ block_end = block_start + 204
 cont_data_dict = testReadObj.get_continuous_blocks(
     block_start, block_end, 'junk4.1')
 print(cont_data_dict)
-start_sample = cont_data_dict.keys()[0]
+start_sample = list(cont_data_dict.keys())[0]
 sample_len = cont_data_dict[start_sample]
 print((start_sample, sample_len))
 
 print('checking get_properties - global values')
 d = testReadObj.get_properties('junk4.1')
-keys = d.keys()
+keys = list(d.keys())
 keys.sort()
 for key in keys:
-    print('%s: %s' % (str(key), str(d[key])))
+    print(('%s: %s' % (str(key), str(d[key]))))
 
-print('checking get_properties at set sammple %i' % (start_sample))
+print(('checking get_properties at set sammple %i' % (start_sample)))
 d = testReadObj.get_properties('junk4.1', start_sample)
-keys = d.keys()
+keys = list(d.keys())
 keys.sort()
 for key in keys:
-    print('%s: %s' % (str(key), str(d[key])))
+    print(('%s: %s' % (str(key), str(d[key]))))
 
 # normal read
 result = testReadObj.read_vector_raw(start_sample, sample_len, 'junk4.1')
-print(len(result))
+print((len(result)))
 print(result)
-print(result.dtype)
+print((result.dtype))
 try:
     # read too far
     result = testReadObj.read_vector_raw(
         start_sample, sample_len + 1, 'junk4.1')
-    raise ValueError, 'whoops - no error when one expected!!!!!'
+    raise ValueError('whoops - no error when one expected!!!!!')
 except IOError:
     traceback.print_exc()
     print('got expected error')
 # read one less than block - should be okay
 t = time.time()
 result = testReadObj.read_vector_raw(start_sample, sample_len - 1, 'junk4.1')
-print('read took %f' % (time.time() - t))
-print(len(result))
+print(('read took %f' % (time.time() - t)))
+print((len(result)))
 print(result)
 
 print('working on channel1.2 - large continuous data')
 start_index, end_index = testReadObj.get_bounds('junk1.2')
 print((start_index, end_index))
-print(testReadObj.get_continuous_blocks(start_index, end_index, 'junk1.2'))
+print((testReadObj.get_continuous_blocks(start_index, end_index, 'junk1.2')))
 t = time.time()
 result = testReadObj.read_vector_raw(
     start_index, end_index - start_index, 'junk1.2')
-print('read took %f' % (time.time() - t))
-print(len(result))
+print(('read took %f' % (time.time() - t)))
+print((len(result)))
 
 print('print all channel rf file metadata for junk1.2')
 this_dict = testReadObj.get_properties('junk1.2')
-keys = this_dict.keys()
+keys = list(this_dict.keys())
 keys.sort()
 for key in keys:
     print((key, this_dict[key]))
@@ -328,24 +329,24 @@ result = testReadObj.read_vector(
     start_index, end_index - start_index, 'junk0.11')
 print('result')
 print(result)
-print('result.shape is %s' % (str(result.shape)))
-print(result.dtype)
+print(('result.shape is %s' % (str(result.shape))))
+print((result.dtype))
 
 print('Test of read_vector from 4 subchannel channel')
 start_index, end_index = testReadObj.get_bounds('junk0')
 result = testReadObj.read_vector(start_index, end_index - start_index, 'junk0')
 print('result')
 print(result)
-print('result.shape is %s' % (str(result.shape)))
-print(result.dtype)
+print(('result.shape is %s' % (str(result.shape))))
+print((result.dtype))
 
 print('Test of read_vector from 4 subchannel float channel')
 start_index, end_index = testReadObj.get_bounds('junk3')
 result = testReadObj.read_vector(start_index, end_index - start_index, 'junk3')
 print('result')
 print(result)
-print('result.shape is %s' % (str(result.shape)))
-print(result.dtype)
+print(('result.shape is %s' % (str(result.shape))))
+print((result.dtype))
 
 print('Test of read_vector from 4 subchannel double channel')
 start_index, end_index = testReadObj.get_bounds('junk3.1')
@@ -353,8 +354,8 @@ result = testReadObj.read_vector(
     start_index, end_index - start_index, 'junk3.1')
 print('result')
 print(result)
-print('result.shape is %s' % (str(result.shape)))
-print(result.dtype)
+print(('result.shape is %s' % (str(result.shape))))
+print((result.dtype))
 
 print('Test of read_vector from 4 subchannel double channel v2')
 start_index, end_index = testReadObj.get_bounds('junk3.2')
@@ -362,14 +363,14 @@ result = testReadObj.read_vector(
     start_index, end_index - start_index, 'junk3.2')
 print('result')
 print(result)
-print('result.shape is %s' % (str(result.shape)))
-print(result.dtype)
+print(('result.shape is %s' % (str(result.shape))))
+print((result.dtype))
 
 print('Verify read_vector sets all imaginary values to zero with single valued channel')
 start_index, end_index = testReadObj.get_bounds('junk1.01')
 result = testReadObj.read_vector(
     start_index, end_index - start_index, 'junk1.01')
 if len(numpy.nonzero(result.imag.flatten())[0]) > 0:
-    raise ValueError, 'Got imaginary part when not expected'
+    raise ValueError('Got imaginary part when not expected')
 
 print('Overall test passed')
