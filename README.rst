@@ -66,12 +66,7 @@ First, ensure that you have the above-listed dependencies installed. On macOS th
 Clone the repository and enter the source directory::
 
     git clone https://github.com/MITHaystack/digital_rf.git
-    cd digital_rf
-
-Create a build directory to keep the source tree clean::
-
-    mkdir build
-    cd build
+    cd digital_rf/build
 
 Build and install::
 
