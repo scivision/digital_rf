@@ -329,9 +329,9 @@ def spectrum_plot(data, freq, cfreq, toffset, log_scale, zscale, title, clr):
     else:
         pss = data
 
-    print freq
+    print(freq)
     freq_s = freq / 1.0E6 + cfreq / 1.0E6
-    print freq_s
+    print(freq_s)
     zscale_low, zscale_high = zscale
 
     if zscale_low == 0 and zscale_high == 0:
@@ -346,7 +346,7 @@ def spectrum_plot(data, freq, cfreq, toffset, log_scale, zscale, title, clr):
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
     ax.plot(freq_s, pss, clr)
-    print freq_s[0], freq_s[-1], zscale_low, zscale_high
+    print(freq_s[0], freq_s[-1], zscale_low, zscale_high)
     ax.axis([freq_s[0], freq_s[-1], zscale_low, zscale_high])
     ax.grid(True)
     ax.set_xlabel('frequency (MHz)')
@@ -859,7 +859,7 @@ def apply_msl_filter(data, msl_code_length, msl_baud_length):
                   105: hex2vec('0x1C6387FF5DA4FA325C895958DC5', 105),
                   }
 
-    print("msl filter data with code ", msl_code_length)
+    print(("msl filter data with code ", msl_code_length))
     code = code_table[msl_code_length]
     # note that the codes are time reversed as defined compared to what we send
     x_msl = numpy.zeros(msl_baud_length * len(code), dtype=numpy.complex64)
@@ -882,7 +882,7 @@ def apply_msl_filter(data, msl_code_length, msl_baud_length):
 # load data and plot it!
 
 def usage():
-    print("usage : %s" % sys.argv[0])
+    print(("usage : %s" % sys.argv[0]))
     print(
         "        -i <input file> -p <type> [-c <chan>] [-f <ch>:<size>] [-r <range>] [-b <bins>] [-t <title>] [-l] [-d] [-m <code info>] [-s <output file>]")
     print(" -i <input file>        The name of the file to load and display, may be a wildcard for multiple files.")
@@ -909,8 +909,8 @@ if __name__ == "__main__":
     channel = ''
     subchan = 0  # sub channel to plot
     atime = 0
-    start_sample = 0L
-    stop_sample = -1L
+    start_sample = 0
+    stop_sample = -1
     modulus = None
     integration = 1
 
@@ -955,9 +955,9 @@ if __name__ == "__main__":
             cfreq = float(val)
         elif opt in ('-a'):
             tuple_time = time.strptime(val, "%Y-%m-%dT%H:%M:%S")
-            print tuple_time
+            print(tuple_time)
             atime = calendar.timegm(tuple_time)
-            print atime
+            print(atime)
 
         elif opt in ('-r'):
             sp = string.split(val, ':')
@@ -997,10 +997,10 @@ if __name__ == "__main__":
             msl_baud_length = int(bl)
 
     for f in input_files:
-        print("file %s" % f)
+        print(("file %s" % f))
 
         try:
-            print "loading data"
+            print("loading data")
 
             drf = digital_rf.DigitalRFReader(f)
 
@@ -1011,16 +1011,16 @@ if __name__ == "__main__":
                 chidx = chans.index(channel)
 
             ustart, ustop = drf.get_bounds(chans[chidx])
-            print ustart, ustop
+            print(ustart, ustop)
 
-            print "loading metadata"
+            print("loading metadata")
 
             drf_properties = drf.get_properties(chans[chidx])
             sfreq_ld = drf_properties['samples_per_second']
             sfreq = float(sfreq_ld)
             toffset = start_sample
 
-            print toffset
+            print(toffset)
 
             if atime == 0:
                 atime = ustart
@@ -1030,7 +1030,7 @@ if __name__ == "__main__":
             sstart = atime + int(toffset)
             dlen = stop_sample - start_sample + 1
 
-            print sstart, dlen
+            print(sstart, dlen)
 
             if cfreq is None:
                 # read center frequency from metadata
@@ -1039,7 +1039,7 @@ if __name__ == "__main__":
                     channel_name=chans[chidx],
                 )
                 # use center frequency of start of data, even if it changes
-                for metadata in metadata_samples.values():
+                for metadata in list(metadata_samples.values()):
                     try:
                         cfreq = metadata['center_frequencies'].ravel()[subchan]
                     except KeyError:
@@ -1056,19 +1056,19 @@ if __name__ == "__main__":
             d = drf.read_vector(sstart, dlen, chans[chidx])
 
             d = d[:, subchan]
-            print d.shape
+            print(d.shape)
 
-            print "d", d[0:10]
+            print("d", d[0:10])
 
             if len(d) < (stop_sample - start_sample):
-                print "Probable end of file, the data size is less than expected value."
+                print("Probable end of file, the data size is less than expected value.")
                 sys.exit()
 
             if msl_code_length > 0:
                 d = apply_msl_filter(d, msl_code_length, msl_baud_length)
 
         except:
-            print("problem loading file %s" % f)
+            print(("problem loading file %s" % f))
             traceback.print_exc(file=sys.stdout)
             sys.exit()
 
@@ -1078,7 +1078,7 @@ if __name__ == "__main__":
             if not os.path.isdir(path_head):
                 os.makedirs(path_head)
             save_plot = True
-        print "generating plot"
+        print("generating plot")
 
         if save_plot:
             # do not need gui, so use non-interactive backend for speed
@@ -1129,7 +1129,7 @@ if __name__ == "__main__":
             for fig in fig_gen:
                 fig.tight_layout()
                 if save_plot:
-                    print 'saving plot'
+                    print('saving plot')
                     fig.savefig(plot_file, bbox_inches='tight', pad_inches=0.05)
                 else:
                     plt.show(fig)
