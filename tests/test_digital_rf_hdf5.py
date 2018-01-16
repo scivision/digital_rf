@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # ----------------------------------------------------------------------------
 # Copyright (c) 2017 Massachusetts Institute of Technology (MIT)
 # All rights reserved.
@@ -13,12 +14,9 @@ Duplicates a subset of the testing in test_rf_write_hdf5.c, then adds read testi
 $Id$
 """
 # standard python imports
-import os
 import time
-import traceback
+import tempfile as tf
 import glob
-import shutil
-
 # third party imports
 import numpy
 import h5py
@@ -72,56 +70,55 @@ print('For start_global_index=%i and sample_rate=%f, dt is %s and picoseconds is
                                                                                         dt, picoseconds))
 
 # set up top level directory
-os.system("rm -rf /tmp/hdf5 ; mkdir /tmp/hdf5")
-os.system("rm -rf /tmp/hdf52 ; mkdir /tmp/hdf52")
 
 print("Test 0 - simple single write to multiple files, no compress, no checksum - channel 0")
-os.system("rm -rf /tmp/hdf5/junk0 ; mkdir /tmp/hdf5/junk0")
-data_object = digital_rf.DigitalRFWriter("/tmp/hdf5/junk0", 'i4', subdir_cadence_secs, file_cadence_millisecs, start_global_index,
-                                                 sample_rate_numerator, sample_rate_denominator, "FAKE_UUID_0", 0, False, True, num_subchannels=num_subchannels)
-data = numpy.array(base_data, numpy.int32)
-result = data_object.rf_write(data)
-data_object.close()
-print("done test 0.1")
+with tf.TemporaryDirectory() as d:
+  do = digital_rf.DigitalRFWriter(tf.mkstemp(prefix='junk0', dir=d)[1],
+                                         'i4', subdir_cadence_secs, file_cadence_millisecs, start_global_index,
+                                         sample_rate_numerator, sample_rate_denominator, "FAKE_UUID_0", 0, False, True, num_subchannels=num_subchannels)
+  data = numpy.array(base_data, numpy.int32)
+  result = do.rf_write(data)
+  do.close()
+  print("done test 0.1")
 
-print("Test 0.1 - simple single write to multiple files using r/i struct layout, no compress, no checksum - channel 0.1")
-os.system("rm -rf /tmp/hdf5/junk0.1 ; mkdir /tmp/hdf5/junk0.1")
-data_object = digital_rf.DigitalRFWriter("/tmp/hdf5/junk0.1", 'i2', subdir_cadence_secs, file_cadence_millisecs, start_global_index,
+  print("Test 0.1 - simple single write to multiple files using r/i struct layout, no compress, no checksum - channel 0.1")
+  do = digital_rf.DigitalRFWriter(tf.mkstemp(prefix='junk0.1', dir=d)[1],
+                                         'i2', subdir_cadence_secs, file_cadence_millisecs, start_global_index,
                                                  sample_rate_numerator, sample_rate_denominator, "FAKE_UUID_0.1", 0, False, True, num_subchannels=num_subchannels)
-result = data_object.rf_write(arr_data)
-data_object.close()
-print("done test 0.1")
+  result = do.rf_write(arr_data)
+  do.close()
+  print("done test 0.1")
 
-print("Test 0.11 - simple single write with one subchannel to multiple files using r/i struct layout, no compress, no checksum - channel 0.1")
-os.system("rm -rf /tmp/hdf5/junk0.11 ; mkdir /tmp/hdf5/junk0.11")
-data_object = digital_rf.DigitalRFWriter("/tmp/hdf5/junk0.11", 'i2', subdir_cadence_secs, file_cadence_millisecs, start_global_index,
+  print("Test 0.11 - simple single write with one subchannel to multiple files using r/i struct layout, no compress, no checksum - channel 0.1")
+  do = digital_rf.DigitalRFWriter(tf.mkstemp(prefix='junk0.11', dir=d)[1],
+                                         'i2', subdir_cadence_secs, file_cadence_millisecs, start_global_index,
                                                  sample_rate_numerator, sample_rate_denominator, "FAKE_UUID_0.11", 0, False, True, num_subchannels=1)
-result = data_object.rf_write(arr_data_single)
-data_object.close()
-print("done test 0.11")
+  result = do.rf_write(arr_data_single)
+  do.close()
+  print("done test 0.11")
 
-print("Test 0.111 - gapped write with is_continuous==True with one subchannel to multiple files using r/i struct layout, no compress, no checksum - channel 0.1")
-os.system("rm -rf /tmp/hdf5/junk0.111 ; mkdir /tmp/hdf5/junk0.111")
-data_object = digital_rf.DigitalRFWriter("/tmp/hdf5/junk0.111", 'i2', subdir_cadence_secs, file_cadence_millisecs, start_global_index,
+  print("Test 0.111 - gapped write with is_continuous==True with one subchannel to multiple files using r/i struct layout, no compress, no checksum - channel 0.1")
+  do = digital_rf.DigitalRFWriter(tf.mkstemp(prefix='junk0.111', dir=d)[1],
+                                         'i2', subdir_cadence_secs, file_cadence_millisecs, start_global_index,
                                                  sample_rate_numerator, sample_rate_denominator, "FAKE_UUID_0.111", 0, False, True, num_subchannels=1)
-result = data_object.rf_write_blocks(arr_data_single, [1, 5], [0, 2])
-data_object.close()
-print("done test 0.111")
+  result = do.rf_write_blocks(arr_data_single, [1, 5], [0, 2])
+  do.close()
+  print("done test 0.111")
 
-print("Test 0.2 - read data from test 0.1 and write as channel 0.2")
-os.system("rm -rf /tmp/hdf5/junk0.2 ; mkdir /tmp/hdf5/junk0.2")
-data_object = digital_rf.DigitalRFWriter("/tmp/hdf5/junk0.2", 'i2', subdir_cadence_secs, file_cadence_millisecs, start_global_index,
+  print("Test 0.2 - read data from test 0.1 and write as channel 0.2")
+  do = digital_rf.DigitalRFWriter(tf.mkstemp(prefix='junk0.2', dir=d)[1],
+                                         'i2', subdir_cadence_secs, file_cadence_millisecs, start_global_index,
                                                  sample_rate_numerator, sample_rate_denominator, "FAKE_UUID_0.2", 0, False, True, num_subchannels=num_subchannels)
-files = glob.glob('/tmp/hdf5/junk0.1/*/*.h5')
-files.sort()
-f = h5py.File(files[0])
-read_data = f['rf_data'].value
-result = data_object.rf_write(read_data)
-data_object.close()
+  files = glob.glob(tf +'/junk0.1*.h5')
+  files.sort()
+  with h5py.File(files[0],'r') as f:
+    read_data = f['rf_data'].value
+  result = do.rf_write(read_data)
+  do.close()
 print("done test 0.2")
 
 print("Test 1 - use complex 1 byte ints, no compress, no checksum - channel 1")
-os.system("rm -rf /tmp/hdf5/junk1 ; mkdir /tmp/hdf5/junk1")
+
 data_object = digital_rf.DigitalRFWriter("/tmp/hdf5/junk1", 'i1', subdir_cadence_secs, file_cadence_millisecs, start_global_index,
                                                  sample_rate_numerator, sample_rate_denominator, "FAKE_UUID_1", 0, False, True, num_subchannels=num_subchannels)
 data = numpy.array(base_data, numpy.int8)
@@ -290,7 +287,7 @@ try:
     # read too far
     result = testReadObj.read_vector_raw(
         start_sample, sample_len + 1, 'junk4.1')
-    raise ValueError, 'whoops - no error when one expected!!!!!'
+    raise ValueError('whoops - no error when one expected!!!!!')
 except IOError:
     traceback.print_exc()
     print('got expected error')
@@ -370,6 +367,6 @@ start_index, end_index = testReadObj.get_bounds('junk1.01')
 result = testReadObj.read_vector(
     start_index, end_index - start_index, 'junk1.01')
 if len(numpy.nonzero(result.imag.flatten())[0]) > 0:
-    raise ValueError, 'Got imaginary part when not expected'
+    raise ValueError('Got imaginary part when not expected')
 
 print('Overall test passed')
