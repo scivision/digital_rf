@@ -11,11 +11,7 @@ The full license is in the LICENSE file, distributed with this software.
 
 INSTALL_REQUIRES=['h5py', 'numpy']
 
-from setuptools import setup, Extension, find_packages
-from setuptools.command.build_py import build_py
-import os
-import numpy
-
+from setuptools import setup, find_packages
 
 
 # Get the long description from the README file
@@ -50,10 +46,7 @@ setup(
         'watchdog': ['watchdog'],
     },
 
-    package_dir={
-        'digital_rf': 'python',
-    },
-    packages=['digital_rf'],
+    packages=find_packages(),
     entry_points= {
         'console_scripts': ['drf=digital_rf.drf_command:main'],
     },

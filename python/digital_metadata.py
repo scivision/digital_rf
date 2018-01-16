@@ -15,6 +15,8 @@ DigitalMetadataReader and DigitalMetadataWriter.
 
 """
 from __future__ import print_function
+import six
+from six.moves import urllib,zip
 
 import collections
 import copy
@@ -26,7 +28,7 @@ import os
 import re
 import time
 import traceback
-import urllib2
+
 from collections import defaultdict
 from distutils.version import StrictVersion
 
@@ -37,8 +39,7 @@ try:
 except ImportError:
     pass
 import numpy
-import six
-from six.moves import zip
+
 
 # local imports
 from . import list_drf
@@ -524,10 +525,10 @@ class DigitalMetadataReader:
             # put properties file in /tmp/dmd_properties_%i.h5 % (pid)
             url = os.path.join(self._metadata_dir, 'dmd_properties.h5')
             try:
-                f = urllib2.urlopen(url)
-            except (urllib2.URLError, urllib2.HTTPError):
+                f = urllib.urlopen(url)
+            except (urllib.URLError, urllib.HTTPError):
                 url = os.path.join(self._metadata_dir, 'metadata.h5')
-                f = urllib2.urlopen(url)
+                f = urllib.urlopen(url)
             tmp_file = os.path.join(
                 '/tmp', 'dmd_properties_%i.h5' % (os.getpid()),
             )

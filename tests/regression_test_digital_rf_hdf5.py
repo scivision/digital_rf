@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # ----------------------------------------------------------------------------
 # Copyright (c) 2017 Massachusetts Institute of Technology (MIT)
 # All rights reserved.
@@ -153,25 +154,25 @@ start_index, end_index = testReadObj.get_bounds(chan_name)
 print('Bounds are %i to %i' % (start_index, end_index))
 
 # test one of get_continuous_blocks - end points in gaps
-start_sample = 139436843434L
-end_sample = 139436843538L
+start_sample = 139436843434
+end_sample = 139436843538
 print('\ncalling get_continuous_blocks between %i and %i (edges in data gaps)' %
       (start_sample, end_sample))
 cont_data_arr = testReadObj.get_continuous_blocks(
     start_sample, end_sample, chan_name)
-corr_result = collections.OrderedDict([(139436843436L, 10L),
-                                       (139436843456L, 10L),
-                                       (139436843476L, 10L),
-                                       (139436843501L, 10L),
-                                       (139436843521L, 10L)])
+corr_result = collections.OrderedDict([(139436843436, 10),
+                                       (139436843456, 10),
+                                       (139436843476, 10),
+                                       (139436843501, 10),
+                                       (139436843521, 10)])
 if not numpy.array_equal(cont_data_arr, corr_result):
-    raise ValueError, 'cont_data_arr = <%s>, but corr_result = <%s>' % (
-        str(cont_data_arr), str(corr_result))
+    raise ValueError('cont_data_arr = <%s>, but corr_result = <%s>' % (
+        str(cont_data_arr), str(corr_result)))
 print('Got correct result %s' % (str(cont_data_arr)))
 
 # test two of get_continuous_blocks - end points in data
-start_sample = 139436843438L
-end_sample = 139436843528L
+start_sample = 139436843438
+end_sample = 139436843528
 print('\ncalling get_continuous_blocks between %i and %i (edges in continuous data)' %
       (start_sample, end_sample))
 cont_data_arr = testReadObj.get_continuous_blocks(
@@ -182,8 +183,8 @@ corr_result = collections.OrderedDict([(139436843438, 8),
                                        (139436843501, 10),
                                        (139436843521, 8)])
 if not numpy.array_equal(cont_data_arr, corr_result):
-    raise ValueError, 'cont_data_arr = <%s>, but corr_result = <%s>' % (
-        str(cont_data_arr), str(corr_result))
+    raise ValueError('cont_data_arr = <%s>, but corr_result = <%s>' % (
+        str(cont_data_arr), str(corr_result)))
 print('Got correct result %s' % (str(cont_data_arr)))
 
 # normal read
@@ -201,8 +202,8 @@ corr_result = numpy.array([[4.0 + 6.0j],
                            [4.0 + 6.0j],
                            [4.0 + 6.0j]])
 if not numpy.array_equal(read_result, corr_result):
-    raise ValueError, 'read_result = <%s>, but corr_result = <%s>' % (
-        str(read_result), str(corr_result))
+    raise ValueError('read_result = <%s>, but corr_result = <%s>' % (
+        str(read_result), str(corr_result)))
 print('Got correct result %s' % (str(read_result)))
 
 print('\nnow try reading across a data gap, which should raise an exception')
@@ -210,7 +211,7 @@ try:
     # read too far
     result = testReadObj.read_vector(first_key, cont_data_arr[
                                      first_key] + 1, chan_name)
-    raise ValueError, 'whoops - no error when one expected!!!!!'
+    raise ValueError('whoops - no error when one expected!!!!!')
 except IOError:
     print(sys.exc_info()[1])
     print('got expected error')
@@ -221,25 +222,25 @@ print('\ntest of reading subset of a continuous block')
 read_result = testReadObj.read_vector(
     first_key, cont_data_arr[first_key] - 1, chan_name)
 if not numpy.array_equal(read_result, corr_result[:-1]):
-    raise ValueError, 'read_result = <%s>, but corr_result = <%s>' % (
-        str(read_result), str(corr_result[:-1]))
+    raise ValueError('read_result = <%s>, but corr_result = <%s>' % (
+        str(read_result), str(corr_result[:-1])))
 print('Got correct result %s' % (str(read_result)))
 
 chan_name = 'junk1.2'
 print('\n now working on channel %s - large continuous data, with padding because continuous but not at file boundaries' % (chan_name))
 start_index, end_index = testReadObj.get_bounds(chan_name)
-corr_result = (139436823000L, 139436843039L)
+corr_result = (139436823000, 139436843039)
 if start_index != corr_result[0] or end_index != corr_result[1]:
-    raise ValueError, 'got wrong bounds: %s versus %s' % (
-        str((start_index, end_index)), str(corr_result))
+    raise ValueError('got wrong bounds: %s versus %s' % (
+        str((start_index, end_index)), str(corr_result)))
 print('got correct bounds %s' % (str((start_index, end_index))))
 
 print('\ntest of get_continuous_blocks for continuous data')
 result = testReadObj.get_continuous_blocks(start_index, end_index, chan_name)
 key = result.keys()[0]
 if not len(result.keys()) == 1 or key != corr_result[0] or result[key] != (corr_result[1] - corr_result[0]) + 1:
-    raise ValueError, 'got wrong continuous blocks: %s versus %s' % (
-        str(result), str(corr_result))
+    raise ValueError('got wrong continuous blocks: %s versus %s' % (
+        str(result), str(corr_result)))
 print('get correct continuous blocks %s' % (str(result)))
 
 print('\ntest of read_vector for all continuous data')
@@ -247,8 +248,8 @@ t = time.time()
 result = testReadObj.read_vector(
     start_index, end_index - start_index, chan_name)
 if len(result) != corr_result[1] - corr_result[0]:
-    raise ValueError, 'got length %i, expected %i' % (
-        len(result), corr_result[1] - corr_result[0])
+    raise ValueError('got length %i, expected %i' % (
+        len(result), corr_result[1] - corr_result[0]))
 print('got expected len %i' % (len(result)))
 print('read took %f' % (time.time() - t))
 

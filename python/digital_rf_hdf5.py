@@ -34,7 +34,6 @@ import six
 
 # local imports
 from . import _py_rf_write_hdf5, digital_metadata, list_drf
-from ._version import __version__
 
 __all__ = (
     'get_unix_time', 'recreate_properties_file',
